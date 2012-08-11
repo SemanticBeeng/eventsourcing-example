@@ -1,7 +1,7 @@
 News
 ----
 
-* 11 Aug 2012: A complete rewrite based on the [Eligosource event-sourcing library](https://github.com/eligosource/eventsourced) is now available in the [eventsourced-example](https://github.com/eligosource/eventsourced-example) repository. This now represents the recommended approach to implement event-sourced web applications.
+* 11 Aug 2012: <b>A complete re-write based on the [Eligosource event-sourcing library](https://github.com/eligosource/eventsourced) is now available in the [eventsourced-example](https://github.com/eligosource/eventsourced-example) repository which now represents the recommended approach how to implement event-sourced web applications.</b>
 * 23 Feb 2012: Work on branch [play](https://github.com/krasserm/eventsourcing-example/tree/play) replaces the Jersey and Scalate-based web layer with [Play Framework 2.0](https://github.com/playframework/Play20/)
 
 Blog
