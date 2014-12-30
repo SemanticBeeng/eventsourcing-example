@@ -14,7 +14,7 @@ import com.sun.jersey.spi.spring.container.servlet.SpringServlet
 import org.eclipse.jetty.server.{Server => JettyServer}
 import org.eclipse.jetty.servlet._
 import org.eclipse.jetty.util.resource.FileResource
-import org.fusesource.scalate.servlet.TemplateEngineFilter
+//import org.fusesource.scalate.servlet.TemplateEngineFilter
 import org.springframework.web.context.ContextLoaderListener
 
 
@@ -23,7 +23,7 @@ object Webserver extends App {
   val context = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
 
   val jerseyHolder = new FilterHolder(new SpringServlet)
-  val scalateHolder = new FilterHolder(new TemplateEngineFilter)
+  //val scalateHolder = new FilterHolder(new TemplateEngineFilter)
 
   jerseyHolder.setInitParameter("com.sun.jersey.config.property.packages", "org.fusesource.scalate.console;dev.example.eventsourcing.server")
   jerseyHolder.setInitParameter("com.sun.jersey.config.feature.Trace", "true")
@@ -37,7 +37,7 @@ object Webserver extends App {
   context.addEventListener(new ContextLoaderListener)
 
   context.addFilter(jerseyHolder, "/*", EnumSet.noneOf(classOf[DispatcherType]))
-  context.addFilter(scalateHolder, "/*", EnumSet.noneOf(classOf[DispatcherType]))
+  //context.addFilter(scalateHolder, "/*", EnumSet.noneOf(classOf[DispatcherType]))
   context.addServlet(new ServletHolder(new HttpServlet {}), "/*")
 
   server.setHandler(context)
