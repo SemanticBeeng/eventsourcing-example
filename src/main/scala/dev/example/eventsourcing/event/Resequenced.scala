@@ -1,9 +1,11 @@
 package dev.example.eventsourcing.event
 
-import akka.actor.{Actor, ActorRef}
+import akka.actor.{Props, ActorSystem, Actor, ActorRef}
 
 trait Resequenced extends ChannelSubscriber[EventLogEntry] {
-  private val registry = Actor.actorOf(new ResequencerRegistry(this)).start
+  implicit val system = ActorSystem("eventsourcing-example")
+
+  private val registry = system.actorOf(Props(new ResequencerRegistry(this)))//.start
 
   abstract override def receive(message: EventLogEntry) =
     registry ! message
@@ -13,6 +15,7 @@ trait Resequenced extends ChannelSubscriber[EventLogEntry] {
 }
 
 private[event] class ResequencerRegistry(target: Resequenced) extends Actor {
+  implicit val system = ActorSystem("eventsourcing-example")
   var resequencers = Map.empty[Long, ActorRef] // logId -> resequencer mapping
 
   def receive = {
@@ -22,7 +25,7 @@ private[event] class ResequencerRegistry(target: Resequenced) extends Actor {
   def resequencer(logId: Long) = resequencers.get(logId) match {
     case Some(resequencer) => resequencer
     case None              => {
-      resequencers = resequencers + (logId -> Actor.actorOf(new Resequencer(target)).start)
+      resequencers = resequencers + (logId -> system.actorOf(Props(new Resequencer(target))))//.start)
       resequencers(logId)
     }
   }

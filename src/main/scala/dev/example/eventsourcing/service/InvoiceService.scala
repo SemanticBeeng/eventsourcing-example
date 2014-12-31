@@ -1,13 +1,13 @@
 package dev.example.eventsourcing.service
 
-import akka.dispatch._
-
 import dev.example.eventsourcing.domain._
 import dev.example.eventsourcing.event._
 import dev.example.eventsourcing.state._
 
+import scala.concurrent.Future
+
 trait InvoiceService extends UpdateProjection[Map[String, Invoice], Invoice] {
-  import InvoiceService._
+  import dev.example.eventsourcing.service.InvoiceService._
 
   //
   // Consistent reads

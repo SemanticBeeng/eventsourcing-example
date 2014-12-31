@@ -11,6 +11,8 @@ import dev.example.eventsourcing.event._
 import dev.example.eventsourcing.util.Iterator._
 import dev.example.eventsourcing.util.Serialization._
 
+import scala.concurrent.Future
+
 /**
  * Experimental.
  */
@@ -44,7 +46,7 @@ class JournalioEventLog extends EventLog {
   }
 
   def appendAsync(event: Event): Future[EventLogEntry] = {
-    val promise = new DefaultCompletableFuture[EventLogEntry]
+    val promise = new DefaultCompletableFuture[EventLogEntry] //@todo port this; was DefaultCompletableFuture
     val location = journal.write(serialize(event), true) // sync
     promise.completeWithResult(EventLogEntry(
       location.getDataFileId,

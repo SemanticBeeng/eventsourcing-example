@@ -10,6 +10,10 @@ import dev.example.eventsourcing.event._
 import dev.example.eventsourcing.util.Iterator._
 import dev.example.eventsourcing.util.Serialization._
 
+import akka.dispatch._
+import scala.concurrent.{Future}
+import scala.util.Try
+
 /**
  * Experimental.
  */
@@ -30,11 +34,11 @@ class BookkeeperEventLog extends EventLog {
     if (fromLogId <= readLogId) new EventIterator(fromLogId, fromLogEntryId) else new EmptyIterator[EventLogEntry]
 
   def appendAsync(event: Event): Future[EventLogEntry] = {
-    val promise = new DefaultCompletableFuture[EventLogEntry]()
+    val promise = new DefaultCompletableFuture[EventLogEntry]() //@todo port this ; was DefaultCompletableFuture
     writeLog.asyncAddEntry(serialize(event), new AddCallback {
       def addComplete(rc: Int, lh: LedgerHandle, entryId: Long, ctx: AnyRef) {
-        if (rc == 0) promise.completeWithResult(EventLogEntry(writeLogId, entryId, entryId, event))
-        else         promise.completeWithException(BKException.create(rc))
+        if (rc == 0) promise.complete(Try(EventLogEntry(writeLogId, entryId, entryId, event)))
+        else         promise.failure(BKException.create(rc)) //@todo port this: was completeWithException
       }
     }, null)
     promise

@@ -1,6 +1,6 @@
 package dev.example.eventsourcing.event
 
-import akka.actor.Actor
+import akka.actor.{Props, ActorSystem, Actor}
 
 trait Channel[A] {
   def subscribe(subscriber: ChannelSubscriber[A])
@@ -10,7 +10,9 @@ trait Channel[A] {
 }
 
 class SimpleChannel[A] extends Channel[A] {
-  private val registry = Actor.actorOf(new SubscriberRegistry).start
+  implicit val system = ActorSystem("eventsourcing-example")
+
+  private val registry = system.actorOf(Props(new SubscriberRegistry))//.start()
 
   def subscribe(subscriber: ChannelSubscriber[A]) =
     registry ! Subscribe(subscriber)

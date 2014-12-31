@@ -24,12 +24,14 @@ object BuildSettings {
 //}
 
 object Resolvers {
-  val typesafeRepo  = "Typesafe Repo"   at "http://repo.typesafe.com/typesafe/releases/"
+  val typesafeSanpshots =  "snapshots"      at "http://oss.sonatype.org/content/repositories/snapshots"
+  val typesafeRepo      = "Typesafe Repo"   at "http://repo.typesafe.com/typesafe/releases/"
+  val typesafeReleasesRepo  = "releases"            at "http://oss.sonatype.org/content/repositories/releases"
   //val journalioRepo = "Journal.IO Repo" at "https://raw.github.com/sbtourist/Journal.IO/master/m2/repo"
 }
 
 object Versions {
-  val Akka   = "1.2"
+  val Akka   = "2.3.8"
   val Jersey = "1.18.3"
   val Jetty  = "9.2.6.v20141205"
   val Netty  = "3.2.10.Final"
@@ -40,8 +42,9 @@ object Dependencies {
   import Versions._
 
   // compile dependencies
-  lazy val akkaActor    = "se.scalablesolutions.akka"  % "akka-actor"        % Akka    % "compile"
-  lazy val akkaStm      = "se.scalablesolutions.akka"  % "akka-stm"          % Akka    % "compile"
+  lazy val akkaActor    = "com.typesafe.akka"         % "akka-actor_2.11"    % Akka    % "compile"
+  lazy val akkaAgent    = "com.typesafe.akka"         % "akka-agent_2.11"    % Akka    % "compile"
+  lazy val akkaStm      = "org.scala-stm"             % "scala-stm_2.11"    % "0.7"   % "compile"
   //lazy val journalio    = "journalio"                  % "journalio"         % "1.4.2" % "compile"
   lazy val journalio    = "com.github.sbtourist"       % "journalio"         % "1.4.2" % "compile"
   lazy val jsr311       = "javax.ws.rs"                % "jsr311-api"        % "1.1.1" % "compile"
@@ -77,9 +80,9 @@ object ExampleBuild extends Build {
     "eventsourcing-example",
     file("."),
     settings = buildSettings ++ /*templateSettings ++*/ Seq (
-      resolvers            := Seq (typesafeRepo/*, journalioRepo*/),
+      resolvers            := Seq (typesafeRepo, typesafeSanpshots, typesafeReleasesRepo/*, journalioRepo*/),
       // compile dependencies (backend)
-      libraryDependencies ++= Seq (akkaActor, akkaStm, journalio, netty, scalaz, zookeeper),
+      libraryDependencies ++= Seq (akkaActor, akkaAgent, akkaStm, journalio, netty, scalaz, zookeeper),
       // compile dependencies (frontend)
       libraryDependencies ++= Seq (jsr311, jerseyCore, jerseyJson, jerseyServer, jerseySpring, springWeb/**, scalate*/),
       // container dependencies

@@ -1,27 +1,22 @@
 package dev.example.eventsourcing
 
-import javax.ws.rs.core._
 import javax.ws.rs.core.Response.Status._
-import javax.xml.bind.annotation._
+import javax.ws.rs.core._
 
 import com.sun.jersey.api.representation.Form
-
 import dev.example.eventsourcing.domain.DomainError
-import com.sun.jersey.api.view.Viewable
 
 package object web {
-  @XmlRootElement(name = "app-error")
+
   case class AppError(errors: DomainError) {
     import scala.collection.JavaConverters._
 
     def this() = this(null)
 
-    @XmlElement
+
     def getMessage: java.util.List[String] = errors.asJava
   }
 
-  @XmlRootElement(name = "sys-error")
-  @XmlAccessorType(XmlAccessType.FIELD)
   case class SysError(message: String) {
     def this() = this(null)
   }

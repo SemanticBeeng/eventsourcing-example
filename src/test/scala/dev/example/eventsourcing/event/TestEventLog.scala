@@ -3,8 +3,12 @@ package dev.example.eventsourcing.event
 import akka.actor._
 import akka.dispatch._
 
+import scala.concurrent.Future
+
 class TestEventLog extends EventLog {
-  val logger = Actor.actorOf(new Logger).start
+  implicit val system = ActorSystem("eventsourcing-example")
+
+  val logger = system.actorOf(Props(new Logger))//.start
   val eventLogId = TestEventLog.nextId()
 
   def iterator = iterator(1L, 0L)
