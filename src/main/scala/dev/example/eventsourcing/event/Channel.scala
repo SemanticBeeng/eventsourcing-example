@@ -10,9 +10,9 @@ trait Channel[A] {
 }
 
 class SimpleChannel[A] extends Channel[A] {
-  implicit val system = ActorSystem("eventsourcing-example")
+  //implicit val system = ActorSystem("eventsourcing-example")
 
-  private val registry = system.actorOf(Props(new SubscriberRegistry))//.start()
+  private val registry = Actor.actorOf(Props(new SubscriberRegistry))//.start()
 
   def subscribe(subscriber: ChannelSubscriber[A]) =
     registry ! Subscribe(subscriber)

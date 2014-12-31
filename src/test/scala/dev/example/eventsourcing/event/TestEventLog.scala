@@ -6,9 +6,7 @@ import akka.dispatch._
 import scala.concurrent.Future
 
 class TestEventLog extends EventLog {
-  implicit val system = ActorSystem("eventsourcing-example")
-
-  val logger = system.actorOf(Props(new Logger))//.start
+  val logger = Actor.actorOf(new Logger).start
   val eventLogId = TestEventLog.nextId()
 
   def iterator = iterator(1L, 0L)

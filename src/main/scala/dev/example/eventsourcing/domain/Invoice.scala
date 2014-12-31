@@ -4,7 +4,9 @@ import dev.example.eventsourcing.event.Event
 
 import scala.collection.immutable.Nil
 
-
+/**
+ *
+ */
 sealed abstract class Invoice extends Aggregate[Invoice] with Handler[InvoiceEvent, Invoice] {
   def items: List[InvoiceItem]
 
@@ -21,7 +23,11 @@ sealed abstract class Invoice extends Aggregate[Invoice] with Handler[InvoiceEve
   def getSum = sum
 }
 
+/**
+ *
+ */
 object Invoice extends Handler[InvoiceEvent, Invoice] {
+
   def create(id: String): Update[InvoiceEvent, DraftInvoice] =
     update(InvoiceCreated(id), transitionToDraft)
 
@@ -36,6 +42,9 @@ object Invoice extends Handler[InvoiceEvent, Invoice] {
   }
 }
 
+/**
+ *
+ */
 case class DraftInvoice(
                          id: String,
                          version: Long = -1,
@@ -68,34 +77,44 @@ case class DraftInvoice(
   }
 }
 
-case class SentInvoice(
-                        id: String,
-                        version: Long = -1,
-                        items: List[InvoiceItem] = Nil,
-                        discount: BigDecimal = 0,
-                        address: InvoiceAddress)
-  extends Invoice {
+/**
+ *
+ */
+case class SentInvoice(id: String, version: Long = -1, items: List[InvoiceItem] = Nil,
+                       discount: BigDecimal = 0, address: InvoiceAddress)  extends Invoice {
+
   private def this() = this(id = null, address = null) // needed by JAXB
 
+  /**
+   *
+   */
   def pay(amount: BigDecimal): Update[InvoiceEvent, PaidInvoice] =
-    if (amount < total) Update.reject(DomainError("paid amount less than total amount"))
-    else update(InvoicePaid(id), transitionToPaid)
 
+    if (amount < total)
+      Update.reject(DomainError("paid amount less than total amount"))
+    else
+      update(InvoicePaid(id), transitionToPaid)
+
+  /**
+   *
+   */
   def handle: PartialFunction[InvoiceEvent, Invoice] =
     transitionToPaid
 
+  /**
+   *
+   */
   private def transitionToPaid: PartialFunction[InvoiceEvent, PaidInvoice] = {
     case InvoicePaid(invoiceId) => PaidInvoice(invoiceId, version + 1, items, discount, address)
   }
 }
 
-case class PaidInvoice(
-                        id: String,
-                        version: Long = -1,
-                        items: List[InvoiceItem] = Nil,
-                        discount: BigDecimal = 0,
-                        address: InvoiceAddress)
-  extends Invoice {
+/**
+ *
+ */
+case class PaidInvoice(id: String, version: Long = -1, items: List[InvoiceItem] = Nil,
+                       discount: BigDecimal = 0, address: InvoiceAddress) extends Invoice {
+
   private def this() = this(id = null, address = null) // needed by JAXB
 
   def paid = true
@@ -103,10 +122,10 @@ case class PaidInvoice(
   def handle = throw new MatchError
 }
 
-case class InvoiceItem(
-                        description: String,
-                        count: Int,
-                        amount: BigDecimal) {
+/**
+ *
+ */
+case class InvoiceItem(description: String, count: Int, amount: BigDecimal) {
   private def this() = this(null, 0, 0)
 }
 
@@ -125,10 +144,16 @@ case class InvoiceItemVersioned(
   def invoiceVersionOption = if (invoiceVersion == -1L) None else Some(invoiceVersion)
 }
 
+/**
+ *
+ */
 case class InvoiceAddress(name: String, street: String, city: String, country: String) {
   private def this() = this(null, null, null, null)
 }
 
+/**
+ *
+ */
 sealed trait InvoiceEvent extends Event {
   def invoiceId: String
 }
